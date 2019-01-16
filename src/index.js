@@ -15,9 +15,23 @@ let scale = 1;
 let canvas = document.createElement("canvas");
 let gl = canvas.getContext("webgl");
 let shaders = [];
+shaders.push(new nanogl.Program(gl, lightinVert, lightinFrag));
 shaders.push(new nanogl.Program(gl, vert, frag));
 shaders.push(new nanogl.Program(gl, customVert, customFrag));
-shaders.push(new nanogl.Program(gl, lightinVert, lightinFrag));
+
+loadTexture("low.png", (texture)=>{
+  shaders[2].bind();
+  texture.bind();
+  gl.generateMipmap(gl.TEXTURE_2D);
+  shaders[2].uHatch0(texture);
+});
+loadTexture("high.png", (texture)=>{
+  shaders[2].bind();
+  texture.bind();
+  gl.generateMipmap(gl.TEXTURE_2D);
+  shaders[2].uHatch1(texture);
+});
+
 
 
 gl.enable(gl.DEPTH_TEST);
@@ -44,7 +58,7 @@ function updateLoop()
   let view = mat4.create();
   mat4.perspective(view, 45, canvas.width / canvas.height, 1, 100);
   mat4.rotateX(view, view, 0.12);
-  mat4.translate(view, view, [0, -2, -10]);
+  mat4.translate(view, view, [0, -2, -7.5]);
   mat4.rotateY(view, view, 0.01 * frames);
 
   let model = mat4.create();
@@ -68,6 +82,18 @@ function updateLoop()
   frames++;
 
   requestAnimationFrame(updateLoop);
+}
+
+function loadTexture(url, callback)
+{
+  const image = new Image();
+  image.src = url;
+  image.onload = ()=>
+  {
+    const texture = new nanogl.Texture(gl);
+    texture.fromImage(image);
+    callback(texture);
+  }
 }
 
 function loadJson(url, callback)
