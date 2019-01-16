@@ -11,7 +11,7 @@ class CreateModelFromJson
     this.vBuffer.attrib('aPosition', 3, gl.FLOAT);
     this.nBuffer.attrib('aNormal', 3, gl.FLOAT);
     this.uvBuffer.attrib('aUv', 2, gl.FLOAT);
-    this.iBuffer = new nanogl.IndexBuffer(gl, gl.UNSIGNED_SHORT, new Uint16Array(json.indices), gl.STATIC_DRAW);
+    this.iBuffer = new nanogl.IndexBuffer(gl, gl.UNSIGNED_INT, new Uint32Array(json.indices), gl.STATIC_DRAW);
   }
   draw(shader) {
       shader.bind();
